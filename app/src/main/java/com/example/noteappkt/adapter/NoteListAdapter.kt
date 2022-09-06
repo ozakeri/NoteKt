@@ -34,7 +34,7 @@ class NoteListAdapter(
         fun bind(noteEntity: NoteEntity, listener: CardClickListener) {
             binding.pinnedtitle.text = noteEntity.noteItem.title
             binding.pinneddescription.text = noteEntity.noteItem.note
-            //binding.upcomingCard.setCardBackgroundColor(Color.parseColor(noteEntity.noteItem.color))
+            binding.upcomingCard.setCardBackgroundColor(Color.parseColor(noteEntity.noteItem.color))
 
             binding.imageFilterButton2.setOnClickListener {
                 listener.imageClickListener(it,noteEntity)
