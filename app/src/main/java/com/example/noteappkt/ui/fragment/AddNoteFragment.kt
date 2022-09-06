@@ -8,10 +8,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.noteappkt.R
+import com.example.noteappkt.data.local.entity.NoteEntity
 import com.example.noteappkt.data.local.model.NoteItem
 import com.example.noteappkt.databinding.FragmentAddNoteBinding
 import com.example.noteappkt.ui.viewmodel.NoteViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AddNoteFragment : Fragment() {
 
     private lateinit var binding: FragmentAddNoteBinding
@@ -26,6 +29,10 @@ class AddNoteFragment : Fragment() {
 
         binding.fabcheckBtn.setOnClickListener{
 
+            val noteItem = NoteItem(binding.titleEdtx.text.toString(),binding.noteEdtx.text.toString(),"",false)
+            val noteEntity = NoteEntity(null,noteItem)
+            viewmodel.insertToDb(noteEntity)
+            println("noteEntity====" + noteEntity.noteItem.note)
         }
 
         return binding.root

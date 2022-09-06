@@ -8,9 +8,12 @@ import android.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import com.example.noteappkt.R
 import com.example.noteappkt.adapter.CardClickListener
+import com.example.noteappkt.adapter.NoteListAdapter
+import com.example.noteappkt.adapter.NotePinnedListAdapter
 import com.example.noteappkt.data.local.entity.NoteEntity
 import com.example.noteappkt.databinding.FragmentListBinding
 import com.example.noteappkt.ui.viewmodel.NoteViewModel
@@ -29,8 +32,12 @@ class ListFragment : Fragment(), CardClickListener {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
 
+        getUnPinnedNotes()
+        getPinnedNotes()
+
         binding.addnoteFab.setOnClickListener {
-            Navigation.findNavController(binding.root).navigate(R.id.action_listFragment_to_addNoteFragment)
+            Navigation.findNavController(binding.root)
+                .navigate(R.id.action_listFragment_to_addNoteFragment)
         }
         return binding.root
     }
@@ -42,8 +49,9 @@ class ListFragment : Fragment(), CardClickListener {
 
     override fun clickListener(item: NoteEntity) {
         val bundle = Bundle()
-        bundle.putParcelable("note" , item)
-        Navigation.findNavController(binding.root).navigate(R.id.action_listFragment_to_addNoteFragment,bundle)
+        bundle.putParcelable("note", item)
+        Navigation.findNavController(binding.root)
+            .navigate(R.id.action_listFragment_to_addNoteFragment, bundle)
     }
 
     override fun imageClickListener(image: View, noteEntity: NoteEntity) {
@@ -57,6 +65,32 @@ class ListFragment : Fragment(), CardClickListener {
         })
 
         popupMenu.show()
+    }
+
+    fun getUnPinnedNotes() {
+        viewModel.getAllNoteList.observe(this, Observer {
+            val notes: ArrayList<NoteEntity> = ArrayList()
+            it.forEach {
+                if (!it.noteItem.pinned) {
+                    notes.add(it)
+                }
+            }
+
+            binding.upcomingRv.adapter = NoteListAdapter(notes, this)
+        })
+    }
+
+    fun getPinnedNotes() {
+        viewModel.getAllNoteList.observe(this, Observer {
+            val notes: ArrayList<NoteEntity> = ArrayList()
+            it.forEach {
+                if (it.noteItem.pinned) {
+                    notes.add(it)
+                }
+            }
+
+            binding.pinnedRv.adapter = NotePinnedListAdapter(notes, this)
+        })
     }
 
 }
