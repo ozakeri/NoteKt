@@ -1,6 +1,5 @@
 package com.example.noteappkt.ui.fragment
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.*
@@ -28,6 +27,8 @@ class AddNoteFragment : Fragment(), MenuProvider {
     var colorValue: String = "#64C8FD"
     var pinned: Boolean = false
     lateinit var mainActivity: MainActivity
+    private lateinit var noteEntity: NoteEntity
+    private var isaUpdate = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +36,19 @@ class AddNoteFragment : Fragment(), MenuProvider {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_note, container, false)
+
+        if (arguments != null) {
+            noteEntity = arguments?.getParcelable("note")!!
+            isaUpdate = true
+            binding.titleEdtx.setText(noteEntity.noteItem.title)
+            binding.noteEdtx.setText(noteEntity.noteItem.note)
+            pinned = noteEntity.noteItem.pinned
+            colorValue = noteEntity.noteItem.color
+
+            checkColor(colorValue)
+
+        }
+
 
         selectColor()
 
@@ -47,6 +61,14 @@ class AddNoteFragment : Fragment(), MenuProvider {
                 pinned
             )
             val noteEntity = NoteEntity(null, noteItem)
+
+            if (isaUpdate) {
+
+            } else {
+
+            }
+
+
             viewmodel.insertToDb(noteEntity)
 
         }
@@ -103,6 +125,23 @@ class AddNoteFragment : Fragment(), MenuProvider {
                 this.check4.id -> colorValue = "#D77FFD"
                 this.check5.id -> colorValue = "#FF419A"
                 this.check6.id -> colorValue = "#7FFB76"
+
+            }
+        }
+    }
+
+
+    fun checkColor(color: String) {
+        unCheckAll()
+
+        binding.apply {
+            when (color) {
+                "#64C8FD" -> binding.check1.visibility = View.VISIBLE
+                "#8069FF" -> this.check2.visibility = View.VISIBLE
+                "#FFCC36" -> this.check3.visibility = View.VISIBLE
+                "#D77FFD" -> this.check4.visibility = View.VISIBLE
+                "#FF419A" -> this.check5.visibility = View.VISIBLE
+                "#7FFB76" -> this.check6.visibility = View.VISIBLE
 
             }
         }
